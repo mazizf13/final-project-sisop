@@ -1,11 +1,12 @@
 #!/bin/bash
 
-declare -a daftarLaporan
+declare -A daftarLaporan
+idLaporanCounter=0
 
 tampilkanMenu() {
-    echo "======================================================================================="
+    echo -e "=======================================================================================\n"
     echo "========================= SIADU PERUMAHAN RUNGKUT ASRI TIMUR ========================="
-    echo "======================================================================================="
+    echo -e "=======================================================================================\n"
     echo "Menu: "
     echo "1. Tambah Laporan"
     echo "2. Tampilkan Laporan"
@@ -14,47 +15,47 @@ tampilkanMenu() {
     echo "5. Cari Laporan"
     echo "6. Menu Lain"
     echo "7. Keluar dan Simpan"
-    echo "Pilih menu: "
+    echo -e "Pilih menu: "
 }
 
 tambahLaporan() {
+    idLaporanCounter=$((idLaporanCounter + 1))
+    idLaporan=$idLaporanCounter
     laporanBaru=()
+    
     read -p "Masukkan Nama: " nama
-    laporanBaru+=("Nama: $nama")
     read -p "Masukkan Alamat: " alamat
-    laporanBaru+=("Alamat: $alamat")
     read -p "Masukkan Nomor HP: " nomorHp
-    laporanBaru+=("Nomor HP: $nomorHp")
     read -p "Masukkan Jenis Laporan: " jenisLaporan
-    laporanBaru+=("Jenis Laporan: $jenisLaporan")
     read -p "Masukkan Permasalahan: " permasalahan
-    laporanBaru+=("Permasalahan: $permasalahan")
     read -p "Masukkan Lokasi: " lokasi
-    laporanBaru+=("Lokasi: $lokasi")
     tanggal=$(date)
-    laporanBaru+=("Tanggal: $tanggal")
-    daftarLaporan+=("${laporanBaru[@]}")
-    echo "Laporan Kami Terima!"
+    
+    laporanBaru=("ID: $idLaporan\n" "Nama: $nama\n" "Alamat: $alamat\n" "Nomor HP: $nomorHp\n" "Jenis Laporan: $jenisLaporan\n" "Permasalahan: $permasalahan\n" "Lokasi: $lokasi\n" "Tanggal: $tanggal\n")
+    
+    daftarLaporan["$idLaporan"]="${laporanBaru[@]}"
+    
+    echo -e "Laporan Kami Terima!\n"
 }
 
 tampilkanSemuaLaporan() {
     if [ ${#daftarLaporan[@]} -eq 0 ]; then
-        echo "Belum Ada Laporan Yang Tersedia."
+        echo -e "Belum Ada Laporan Yang Tersedia.\n"
     else
-        echo "Daftar Laporan:"
-        for laporan in "${daftarLaporan[@]}"; do
-            echo "$laporan"
-            echo "-------------------"
+        echo -e "Daftar Laporan:\n"
+        for idLaporan in "${!daftarLaporan[@]}"; do
+            laporan=${daftarLaporan["$idLaporan"]}
+            echo -e "$laporan-------------------\n"
         done
     fi
 }
 
 editLaporan() {
     read -p "Masukkan ID Laporan Yang Ingin Diedit: " idLaporan
-    if [ $idLaporan -gt 0 ] && [ $idLaporan -le ${#daftarLaporan[@]} ]; then
-        laporan=${daftarLaporan[$idLaporan - 1]}
-        echo "Laporan yang ingin diedit:"
-        echo "$laporan"
+    laporan=${daftarLaporan["$idLaporan"]}
+    
+    if [ -n "$laporan" ]; then
+        echo -e "Laporan yang ingin diedit:\n$laporan"
 
         read -p "Masukkan Nama Baru: " namaBaru
         read -p "Masukkan Alamat Baru: " alamatBaru
@@ -64,22 +65,23 @@ editLaporan() {
         read -p "Masukkan Lokasi Baru: " lokasiBaru
 
         # Update laporan
-        daftarLaporan[$idLaporan - 1]="Nama: $namaBaru Alamat: $alamatBaru Nomor HP: $nomorHpBaru Jenis Laporan: $jenisLaporanBaru Permasalahan: $permasalahanBaru Lokasi: $lokasiBaru"
-
-        echo "Laporan Berhasil Diubah!"
+        daftarLaporan["$idLaporan"]="ID: $idLaporan\nNama: $namaBaru\nAlamat: $alamatBaru\nNomor HP: $nomorHpBaru\nJenis Laporan: $jenisLaporanBaru\nPermasalahan: $permasalahanBaru\nLokasi: $lokasiBaru\n"
+        
+        echo -e "Laporan Berhasil Diubah!\n"
     else
-        echo "ID Laporan Tidak Valid."
+        echo -e "ID Laporan Tidak Valid.\n"
     fi
 }
 
 hapusLaporan() {
     read -p "Masukkan ID Laporan Yang Ingin Dihapus: " idLaporan
-    if [ $idLaporan -gt 0 ] && [ $idLaporan -le ${#daftarLaporan[@]} ]; then
-        unset "daftarLaporan[$idLaporan - 1]"
-        daftarLaporan=("${daftarLaporan[@]}")
-        echo "Laporan Berhasil Dihapus!"
+    laporan=${daftarLaporan["$idLaporan"]}
+    
+    if [ -n "$laporan" ]; then
+        unset daftarLaporan["$idLaporan"]
+        echo -e "Laporan Berhasil Dihapus!\n"
     else
-        echo "ID Laporan Tidak Valid."
+        echo -e "ID Laporan Tidak Valid.\n"
     fi
 }
 
@@ -196,9 +198,9 @@ simpanLaporanKeFile() {
         echo "Tidak ada data untuk disimpan."
     else
         echo "Simpan data ke file data.txt..."
-        for laporan in "${daftarLaporan[@]}"; do
-            echo "$laporan" >> data.txt
-            echo "-------------------" >> data.txt
+        for idLaporan in "${!daftarLaporan[@]}"; do
+            laporan=${daftarLaporan["$idLaporan"]}
+            echo -e "$laporan\n-------------------" >> data.txt
         done
         echo "Data berhasil disimpan ke data.txt."
     fi
@@ -206,7 +208,7 @@ simpanLaporanKeFile() {
 
 
 pilihan=0
-while [ $pilihan -ne 5 ]; do
+while [ $pilihan -ne 7 ]; do
     tampilkanMenu
     read -r pilihan
     case $pilihan in
@@ -218,10 +220,10 @@ while [ $pilihan -ne 5 ]; do
         6) menuLain ;;
         7)
             simpanLaporanKeFile
-            echo "Program Selesai."
+            echo -e "Program Selesai.\n"
             ;;
         *)
-            echo "Pilihan Tidak Valid. Silakan Pilih Menu Yang Benar."
+            echo -e "Pilihan Tidak Valid. Silakan Pilih Menu Yang Benar.\n"
             ;;
     esac
 done
