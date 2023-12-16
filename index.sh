@@ -87,7 +87,13 @@ hapusLaporan() {
 
 cariLaporan() {
     while true; do
-        read -p "Masukkan ID Laporan untuk Pencarian: " idCari
+        read -p "Masukkan ID Laporan untuk Pencarian (atau 'kembali' untuk kembali ke menu): " idCari
+
+        if [ "$idCari" = "kembali" ]; then
+            echo "Kembali ke Menu Utama."
+            break
+        fi
+
         laporan=${daftarLaporan["$idCari"]}
 
         if [ -n "$laporan" ]; then
@@ -95,10 +101,11 @@ cariLaporan() {
             echo "-------------------"
             break
         else
-            echo -e "ID Laporan Tidak Valid. Coba lagi.\n"
+            echo -e "ID Laporan Tidak Valid. Coba lagi atau ketik 'kembali' untuk kembali ke menu.\n"
         fi
     done
 }
+
 
 
 menuLain() {
