@@ -4,7 +4,7 @@ declare -a daftarLaporan
 
 tampilkanMenu() {
     echo "======================================================================================="
-    echo "========================= SIADU PERUMAHAN RUNGKUT ASRI TIMUR "========================="
+    echo "========================= SIADU PERUMAHAN RUNGKUT ASRI TIMUR ========================="
     echo "======================================================================================="
     echo "Menu: "
     echo "1. Tambah Laporan"
