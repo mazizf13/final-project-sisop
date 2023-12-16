@@ -86,25 +86,20 @@ hapusLaporan() {
 }
 
 cariLaporan() {
-    read -p "Masukkan Nama untuk Pencarian: " namaCari
-    if [ ${#daftarLaporan[@]} -eq 0 ]; then
-        echo "Belum Ada Laporan Yang Tersedia."
-    else
-        ditemukan=false
-        echo "Hasil Pencarian untuk Nama '$namaCari':"
-        for laporan in "${daftarLaporan[@]}"; do
-            if [[ $laporan == *"$namaCari"* ]]; then
-                echo "$laporan"
-                echo "-------------------"
-                ditemukan=true
-            fi
-        done
+    while true; do
+        read -p "Masukkan ID Laporan untuk Pencarian: " idCari
+        laporan=${daftarLaporan["$idCari"]}
 
-        if [ "$ditemukan" = false ]; then
-            echo "Tidak ditemukan laporan dengan nama '$namaCari'."
+        if [ -n "$laporan" ]; then
+            echo -e "Hasil Pencarian untuk ID '$idCari':\n$laporan"
+            echo "-------------------"
+            break
+        else
+            echo -e "ID Laporan Tidak Valid. Coba lagi.\n"
         fi
-    fi
+    done
 }
+
 
 menuLain() {
     while true; do
