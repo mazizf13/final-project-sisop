@@ -45,7 +45,6 @@ tampilkanSemuaLaporan() {
         for laporan in "${daftarLaporan[@]}"; do
             echo "$laporan"
             echo "-------------------"
-            echo "-------------------"
         done
     fi
 }
